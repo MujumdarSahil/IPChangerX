@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPChangerX</title>
+    <style>
+        body {
+            background-image: url('/static/background.jpg');
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            font-size: 3em;
+            font-weight: bold;
+        }
+        h2 {
+            font-size: 2em;
+        }
+        button {
+            background-color: #ff9900;
+            color: black;
+            font-weight: bold;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        input {
+            padding: 10px;
+            font-size: 1em;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>IPChangerX</h1>
+    <h2>Current IP: <span id="current-ip">{{ current_ip }}</span></h2>
+
+    <button onclick="changeIP()">Change IP Now</button><br>
+
+    <input type="number" id="interval" placeholder="Set Interval (seconds)">
+    <button onclick="setInterval()">Set Interval</button><br>
+
+    <button onclick="startAuto()">Start Automatic IP Change</button>
+    <button onclick="stopAuto()">Stop Automatic IP Change</button>
+
+    <script>
+        const socket = io();
+
+        // Update the IP address on the page
+        socket.on('ip_update', (data) => {
+            document.getElementById('current-ip').innerText = data.ip;
+        });
+
+        function changeIP() {
+            socket.emit('change_ip');
+        }
+
+        function setInterval() {
+            const interval = document.getElementById('interval').value;
+            socket.emit('set_interval', { interval: interval });
+        }
+
+        function startAuto() {
+            socket.emit('start_auto');
+        }
+
+        function stopAuto() {
+            socket.emit('stop_auto');
+        }
+    </script>
+</body>
+</html>
